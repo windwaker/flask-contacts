@@ -73,7 +73,9 @@ def contacts():
     '''
     Show alls contacts
     '''
+    print(app.config['SQLALCHEMY_DATABASE_URI'])
     contacts = Contact.query.order_by(Contact.name).all()
+    print(len(contacts))
     return render_template('web/contacts.html', contacts=contacts)
 
 
