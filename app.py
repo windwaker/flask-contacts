@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'my secret'
 app.config['DEBUG'] = False
 
 # Database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://bgcmtrdgusuwik:05060b67183fb8ba7ddb937aaec3f6a20617b3bbd547ce89a19eceb760f6fa4b@ec2-54-217-217-142.eu-west-1.compute.amazonaws.com:5432/d2po2asdglml7g'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bgcmtrdgusuwik:05060b67183fb8ba7ddb937aaec3f6a20617b3bbd547ce89a19eceb760f6fa4b@ec2-54-217-217-142.eu-west-1.compute.amazonaws.com:5432/d2po2asdglml7g'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
