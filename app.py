@@ -21,6 +21,38 @@ def index():
     '''
     return redirect(url_for('contacts'))
 
+@app.route("/csv", methods=['GET','POST'])
+def csvread():
+    if (request.method == 'POST'):
+        csvf = request.files['file']        
+        random_hex = secrets.token_hex(8)
+        _, f_ext = os.path.splitext(csvf.filename)
+        filename = random_hex + f_ext
+        file_path = os.path.join(app.root_path, 'static/csv', filename)
+        csvf.save(file_path)
+        with open(file_path, newline='') as csvfile:
+            read = csv.DictReader(csvfile)
+            for row in read:
+                name = row['first_name']
+                surname = row['last_name']
+                email = row['email']
+                phone = row['phone']
+
+
+                new_contact = Contact(
+                    name = name, 
+                    surname = surname, 
+                    email = email, 
+                    phone = phone
+                    )
+                db.session.add(new_contact)
+                db.session.commit()
+
+    
+            flash('Contacts added successfully', 'success')
+            return redirect(url_for('contacts'))
+    else:
+        return render_template('web/csv.html')
 
 @app.route("/new_contact", methods=('GET', 'POST'))
 def new_contact():
