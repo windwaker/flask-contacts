@@ -9,6 +9,7 @@
 			<th scope="col">Surname</th>
 			<th scope="col">E-Mail</th>
 			<th scope="col">Phone</th>
+			<td>Profile</td>
 			<td></td>
 		</tr>
 	</thead>
@@ -19,6 +20,7 @@
 			<td>{{ contact.surname }}</td>
 			<td>{{ contact.email }}</td>
 			<td>{{ contact.phone }}</td>
+			<td><a href="{{url_for('contact',uid=contact.uid)}}">OPEN PROFILE</a></td>
 			<td class="text-right">
 				<div class="row">
 					<form action="{{ url_for('contacts_delete') }}" method="post" class="pull-right">

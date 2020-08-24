@@ -1,6 +1,9 @@
 from flask import Flask, redirect, url_for, render_template, request, flash
-from models import db, Contact
+from models import db, Contact, Note
 from forms import ContactForm
+from sqlalchemy import desc
+from filters import datetimeformat
+import secrets
 
 # Flask
 app = Flask(__name__)
@@ -13,6 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///book.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+app.jinja_env.filters['datetimeformat'] = datetimeformat
 
 @app.route("/")
 def index():
@@ -20,6 +24,42 @@ def index():
     Home page
     '''
     return redirect(url_for('contacts'))
+
+@app.route("/contact/<string:uid>")
+def contact(uid):
+    contact = Contact.query.filter_by(uid=uid).first()
+    Notes = Note.query.filter_by(to=uid).order_by(desc(Note.date)).all()
+    if (contact):
+        return render_template('web/contact.html',Notes=Notes, contact=contact)
+    else:
+        flash('No Contact with ('+uid+') found','danger')
+        return redirect(url_for('contacts'))
+
+
+@app.route("/remark", methods=('GET', 'POST'))
+def remark():
+    if (request.method == 'POST'):
+        to = request.form.get('to')
+        text = request.form.get('remark')
+        new_note = Note(
+                        rid=secrets.token_urlsafe(8),
+                        to = to,
+                        text = text
+                        )
+        db.session.add(new_note)
+        db.session.commit()
+        return redirect(url_for('contact',uid=to))
+    else:
+        return 'This URL doesen\'t exist'
+
+@app.route("/remark/delete/<string:rid>")
+def delremark(rid):
+    rem = Note.query.filter_by(rid=rid).first()
+    to = rem.to
+    db.session.delete(rem)
+    db.session.commit()
+    return redirect(url_for('student',uid=to))
+    
 
 @app.route("/csv", methods=['GET','POST'])
 def csvread():
@@ -140,4 +180,4 @@ def contacts_delete():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run()
