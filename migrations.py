@@ -1,28 +1,31 @@
-from models import db, Contact, Note
+import secrets
+
 from faker import Factory
-import secrets 
+
+from models import db, Contact, Note
 
 fake = Factory.create()
-# Spanish
-#fake = Factory.create('es_ES')
+
 # Reload tables
 db.drop_all()
 db.create_all()
+
 # Make 100 fake contacts
 for num in range(50):
     fullname = fake.name().split()
     name = fullname[0]
-    surname = ' '.join(fullname[1:])
+    surname = " ".join(fullname[1:])
     email = fake.email()
     phone = fake.phone_number()
     # Save in database
-    mi_contacto = Contact(
+    fake_contact = Contact(
         uid=secrets.token_urlsafe(8),
         name=name,
         surname=surname,
         email=email,
-        phone=phone)
-    db.session.add(mi_contacto)
+        phone=phone,
+    )
+    db.session.add(fake_contact)
 
 db.session.commit()
 
@@ -31,8 +34,9 @@ for contact in contacts:
     for i in range(5):
         new_remark = Note(
             rid=secrets.token_urlsafe(8),
-            to = contact.uid,
-            text = fake.sentence()
-            )
+            to=contact.uid,
+            text=fake.sentence(nb_words=2, variable_nb_words=True),
+        )
         db.session.add(new_remark)
+
 db.session.commit()

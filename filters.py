@@ -1,5 +1,3 @@
-import os
-import mimetypes
 import arrow
 
 
